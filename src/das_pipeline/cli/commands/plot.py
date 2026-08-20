@@ -175,6 +175,13 @@ def register(app: typer.Typer) -> None:
                 help="相鄰通道的物理距離 (m)，用於 FK 正確 wavenumber",
             ),
         ] = None,
+        distance_range: Annotated[
+            Optional[Tuple[float, float]],
+            typer.Option(
+                "--distance-range", "--dist-range",
+                help="距離範圍 [low, high] m，只使用範圍內的 channel",
+            ),
+        ] = None,
         freq_range: Annotated[
             Optional[Tuple[float, float]],
             typer.Option("--freq-range", help="頻率範圍 [low, high] Hz"),
@@ -216,6 +223,7 @@ def register(app: typer.Typer) -> None:
             fig = plot_fk_spectrum(
                 patch, ax=ax,
                 channel_spacing=channel_spacing,
+                distance_range=distance_range,
                 freq_range=freq_range,
                 colormap=colormap,
                 title=title,

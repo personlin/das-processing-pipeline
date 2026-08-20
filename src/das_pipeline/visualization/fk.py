@@ -14,6 +14,7 @@ def plot_fk_spectrum(
     ax=None,
     *,
     channel_spacing: Optional[float] = None,
+    distance_range: Optional[Tuple[float, float]] = None,
     freq_range: Optional[Tuple[float, float]] = None,
     db_range: Optional[Tuple[float, float]] = None,
     colormap: str = "viridis",
@@ -35,6 +36,8 @@ def plot_fk_spectrum(
         已存在的 Axes，若無則自動建立。
     channel_spacing : float, optional
         相鄰通道的物理距離（m）。若提供，將 channel index 轉換為實際距離。
+    distance_range : tuple of float, optional
+        距離範圍 [low, high] m。只使用此範圍內的 channel 計算 F-K 頻譜。
     freq_range : tuple of float, optional
         頻率範圍 [low, high] Hz。
     db_range : tuple of float, optional
@@ -69,6 +72,14 @@ def plot_fk_spectrum(
         patch = patch.update_coords(
             distance=dc.get_coord(values=patch.get_array("distance"), units="m")
         )
+
+    if distance_range is not None:
+        low, high = distance_range
+        if low > high:
+            raise ValueError("distance_range 的下限不可大於上限")
+        patch = patch.select(distance=(low, high))
+        if patch.shape[patch.dims.index("distance")] < 2:
+            raise ValueError("distance_range 至少需要包含 2 個 channel")
 
     # --- 處理 NaN channel：沿 distance 軸線性內插（FFT 無法容忍 NaN）---
     data = np.array(patch.data, copy=True)

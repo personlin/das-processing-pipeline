@@ -365,6 +365,18 @@ class TestPlotFkSpectrum(unittest.TestCase):
         fig = plot_fk_spectrum(test_patch, channel_spacing=5.0)
         self.assertIsInstance(fig, Figure)
 
+    def test_distance_range(self):
+        test_patch = _make_test_patch(
+            n_time=200, n_distance=20, distance_step=10.0,
+        )
+        fig = plot_fk_spectrum(test_patch, distance_range=(20.0, 100.0))
+        self.assertIsInstance(fig, Figure)
+
+    def test_invalid_distance_range(self):
+        test_patch = _make_test_patch(n_time=200, n_distance=20)
+        with self.assertRaises(ValueError):
+            plot_fk_spectrum(test_patch, distance_range=(100.0, 20.0))
+
     def test_freq_range_filter(self):
         test_patch = _make_test_patch(n_time=200, n_distance=10, sampling_rate=100.0)
         fig = plot_fk_spectrum(test_patch, freq_range=(1.0, 30.0))
