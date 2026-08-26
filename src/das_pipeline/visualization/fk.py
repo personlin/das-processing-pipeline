@@ -144,6 +144,9 @@ def plot_fk_spectrum(
         show=False,
     )
 
+    if show_colorbar and len(fig.axes) > 1:
+        fig.axes[-1].set_ylabel("Power [dB]")
+
     # 標示零波數
     ax.axvline(0, color="white", linestyle="--", linewidth=0.5, alpha=0.5)
 

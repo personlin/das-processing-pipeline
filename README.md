@@ -266,9 +266,11 @@ das-pipeline check --help
 | `--merge`, `-m` | 合併多個 chunk 後繪圖 |
 | `--pattern`, `-p` | 目錄模式的 glob，預設 `*.h5` |
 | `--sort-by` | 合併排序：`chunk_index`（預設）或 `timestamp` |
-| `--channel-spacing` | 通道間距（m），必要 |
+| `--channel-spacing` | 通道間距（m），若未指定則自動從座標推斷 |
+| `--distance-range`, `--dist-range` | 距離範圍 [low, high] m，只使用範圍內的 channel |
+| `--taper-ratio` | 合併後 F-K 計算前的全域 taper 比例（僅 `--merge` 時使用），預設 0.05 |
 | `--freq-range` | 頻率範圍（Hz） |
-| `--colormap` | Matplotlib colormap，預設 `hot` |
+| `--colormap` | Matplotlib colormap，預設 `viridis` |
 | `--title` | 自訂圖表標題 |
 | `--save`, `-s` | 圖檔輸出目錄；未指定時顯示互動式視窗 |
 | `--format` | 圖檔格式：`png`（預設）、`pdf`、`svg` |
@@ -314,6 +316,7 @@ das-pipeline check --help
 | `--trigger-threshold` | STA/LTA ratio 觸發閾值，預設 3.0 |
 | `--detrigger-threshold` | STA/LTA ratio 解除觸發閾值，預設 1.5 |
 | `--min-channels` | 最少同時觸發通道數（空間一致性），預設 30 |
+| `--ignore-channels` | 忽略前 N 個 channel，避免井口雜訊，預設 0 |
 | `--min-duration` | 最短事件持續時間（秒），預設 0.1 |
 | `--merge-window` | 合併相鄰事件閾值（秒），0=不合併 |
 | `--merge`, `-m` | 合併多個 chunk 後檢測 |
@@ -321,6 +324,7 @@ das-pipeline check --help
 | `--sort-by` | 合併排序：`chunk_index`（預設）或 `timestamp` |
 | `--save`, `-s` | 輸出目錄路徑 |
 | `--format`, `-f` | 輸出格式：`csv`、`json` 或 `all`（預設） |
+| `--plot-stalta` | 繪製 ratio 中位數圖 |
 
 ### `snr`
 
@@ -423,6 +427,7 @@ das-pipeline check --help
 ```text
 ├── configs/config.yaml.example  # 設定檔範例
 ├── src/das_pipeline/
+│   ├── check/                   # 資料涵蓋率與缺失統計檢查
 │   ├── config.py                # Pydantic 設定模型
 │   ├── pipeline.py              # 轉檔流程
 │   ├── cli/                     # CLI 入口與子命令（convert / amplification / detect / snr / plot / overlay / check）

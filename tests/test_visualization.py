@@ -411,6 +411,7 @@ class TestPlotFkSpectrum(unittest.TestCase):
         ax = fig.axes[0]
         self.assertEqual(ax.get_xlabel(), "Wavenumber [1 / m]")
         self.assertEqual(ax.get_ylabel(), "Frequency")
+        self.assertEqual(fig.axes[-1].get_ylabel(), "Power [dB]")
 
     def test_db_range_sets_clim(self):
         """db_range 應直接設為 colorbar 上下限。"""

@@ -1,5 +1,5 @@
 # DAS Processing Pipeline — 轉檔設定範例
-# 使用方式: das-pipeline convert --config configs/convert_default.yaml
+# 使用方式: das-pipeline convert --config configs/config.yaml
 
 project_name: "das_convert_default"
 

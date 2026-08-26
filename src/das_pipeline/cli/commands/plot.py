@@ -182,6 +182,13 @@ def register(app: typer.Typer) -> None:
                 help="距離範圍 [low, high] m，只使用範圍內的 channel",
             ),
         ] = None,
+        taper_ratio: Annotated[
+            float,
+            typer.Option(
+                "--taper-ratio",
+                help="合併後 F-K 計算前的全域 taper 比例（僅 --merge 時使用）",
+            ),
+        ] = 0.05,
         freq_range: Annotated[
             Optional[Tuple[float, float]],
             typer.Option("--freq-range", help="頻率範圍 [low, high] Hz"),
@@ -214,9 +221,20 @@ def register(app: typer.Typer) -> None:
         """繪製 F-K 頻譜圖 (frequency x wavenumber 功率譜)。"""
         setup_matplotlib_backend(no_display)
 
-        from das_pipeline.visualization import plot_fk_spectrum
+        from das_pipeline.preprocessing.taper import taper
 
-        patch, _ = _load_and_clean(path, merge, pattern, sort_by)
+        file_paths = collect_h5_files(path, pattern)
+        patch = load_patch(file_paths, merge=merge, sort_by=sort_by)
+        log_patch_info(patch)
+        patch = warn_bad_channels_for_plot(patch)
+
+        if merge and len(file_paths) > 1:
+            patch = taper(patch, taper_ratio=taper_ratio)
+            typer.echo(
+                f"✅ 合併後套用 F-K 全域 taper: ratio={taper_ratio:.3f}"
+            )
+
+        from das_pipeline.visualization import plot_fk_spectrum
 
         fig, ax = plt.subplots(figsize=(8, 6))
         try:
