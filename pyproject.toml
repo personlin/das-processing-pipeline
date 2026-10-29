@@ -23,5 +23,5 @@ test = [
 das-pipeline = "das_pipeline.cli:app"
 
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=84.1.0"]
 build-backend = "setuptools.build_meta"
